@@ -39,7 +39,7 @@ def harvest(which):
     # Sets the URLs in iterable list
     url_list = [CMEgold_futures,CMEgold_futures2,CMEsilver_futures,CMEsilver_futures2,CMEpalladium_futures,CMEpalladium_futures2,CMEplatinum_futures,CMEplatinum_futures2,CME_TenYear_futures,CME_TenYear_futures2,ICE_USD_futures,ICE_USD_futures2,ICE_ZAR_futures,ICE_ZAR_futures2,Gold_OpenInt,Silver_OpenInt,Palladium_OpenInt,Platinum_OpenInt]
     
-    # This is here to avoid the timeout
+    # This is here to avoid the timeout, chunks the requests so Heroku doesn't take more than 30 seconds while data is fetched.
     how_many = {"a":[0,1,2,3,4,5],"b":[6,7,8,9,10,11],"c":[12,13,14,15,16,17]}
     info_list = [get(url_list[i]).json() for i in how_many[which]]
     df_list = [pd.DataFrame(info["dataset"]["data"],columns=info["dataset"]["column_names"]) for info in info_list]
@@ -112,7 +112,7 @@ def manipulate():
     
     # Creates an iterable list of merged dataframes considering dublicate info relevant to each metal
     # This could be better stored in a sql database to prevent redundancy.
-    # This is faster and easier and we didn't have the time, so...
+    # This is faster and easier and I didn't have the time, so...
     merged_list = [grouped_list[i].\
         merge(pruned_list[7+i], on = "Date", how = "inner").\
         merge(grouped_list[4], on = "Date", how = "inner").\
